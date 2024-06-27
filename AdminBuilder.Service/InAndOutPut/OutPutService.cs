@@ -1,6 +1,7 @@
 ﻿using AdminBuilder.Model;
 using AdminBuilder.Service.InAndOutPut.IOutPutDTO;
 using AdminBuilder.Utils.ConfigManager;
+using MySqlX.XDevAPI.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,6 @@ namespace AdminBuilder.Service.InAndOutPut
         {
             try
             {
-
                 outPut.TypeClass = apiModelInfo.ClassType;
                 // 获取输入和输出路径
                 var inPutPath = apiModelInfo.InPutPath;
@@ -60,28 +60,21 @@ namespace AdminBuilder.Service.InAndOutPut
                 // 替换模板中的 %% 占位符为实际生成的字符串集合
                 template = ReplacePlaceholder(template, "%%", outManyList);
                 // 匹配表名与表属性
+                template = ReplacePlaceholder(template, "原表名",outPut.TableName);
                 template = ReplacePlaceholder(template, "表名", tableNameLowerCamel);
                 template = ReplacePlaceholder(template, "表名类", tableNameUpperCamel);
                 outPutPath = Path.Combine(outPutPath, tableNameUpperCamel+apiModelInfo.OutPutFileEnd+apiModelInfo.OutPutEnd);
-                // 获取当前系统的行尾符号
-                string systemNewLine = Environment.NewLine;
-                template = ReplaceLineEndings(template, systemNewLine);
-                
                 // 将替换后的模板写入输出文件
-                File.WriteAllText(outPutPath, template);
+                using (StreamWriter writer = new StreamWriter(outPutPath, false, Encoding.UTF8))
+                {
+                    writer.Write(template.Trim());  // 写入模板内容
+                }
             }
             catch (Exception ex)
             {
                 throw new ApplicationException("输出错误，请查看是否创建相应数据库映射", ex);
             }
         }
-
-        private static string ReplaceLineEndings(string input, string newLine)
-        {
-            // 替换 \r\n, \n, \r 为 newLine
-            return input.Replace("\r\n", newLine).Replace("\n", newLine).Replace("\r", newLine);
-        }
-
         /// <summary>
         /// 用于替换指定占位符
         /// </summary>
@@ -105,7 +98,7 @@ namespace AdminBuilder.Service.InAndOutPut
         private List<string> ExtractText(string input)
         {
             List<string> result = new List<string>();
-            string pattern = @"%(.*?)%";
+            string pattern = @"%\s*([^%]+)\s*%";
             MatchCollection matches = Regex.Matches(input, pattern);
             foreach (Match match in matches)
             {
@@ -125,7 +118,7 @@ namespace AdminBuilder.Service.InAndOutPut
         /// <returns>处理后的字符串</returns>
         private string RemoveText(string input)
         {
-            string pattern = @"%(.*?)%";
+            string pattern = @"%\s*([^%]+)\s*%";
             return Regex.Replace(input, pattern, "%%");
         }
 
@@ -167,7 +160,7 @@ namespace AdminBuilder.Service.InAndOutPut
             {
                 sb.Remove(index, placeholder.Length);
                 string newLine = Environment.NewLine;
-                string insertString = string.Join($"{newLine}    ", replacements);
+                string insertString = string.Join($"{newLine}        ", replacements);
                 sb.Insert(index, insertString);
             }
             string result = sb.ToString().Replace(placeholder,"");

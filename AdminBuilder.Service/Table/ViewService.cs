@@ -21,10 +21,11 @@ namespace AdminBuilder.Service.View
             var infoList = new List<ColumnInfo>();
             dataBase.DbMaintenance.GetColumnInfosByTableName(viewName).ForEach(info =>
             {
-                var data = new ColumnInfo(info.DbColumnName, info.DataType, info.IsNullable, info.IsPrimarykey)
+                var data = new ColumnInfo(info.DbColumnName, info.DataType, info.IsNullable, info.IsPrimarykey);
+                if (info.ColumnDescription != null)
                 {
-                    Description = info.ColumnDescription
-                };
+                    data.Description = info.ColumnDescription;
+                }
                 infoList.Add(data);
             });
 
@@ -42,10 +43,11 @@ namespace AdminBuilder.Service.View
             var dbViews = dataBase.DbMaintenance.GetTableInfoList();
             dbViews.ForEach(info =>
             {
-                var data = new TableBaseInfo(info.Name)
+                var data = new TableBaseInfo(info.Name);
+                if(info.Description != null)
                 {
-                    Desc = info.Description
-                };
+                    data.Desc = info.Description;
+                }
                 views.Add(data);
             });
             return views;

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdminBuilderForm));
             this.CreateConnectionButton = new Sunny.UI.UISymbolButton();
             this.FormStyleManger = new Sunny.UI.UIStyleManager(this.components);
             this.uiLabel1 = new Sunny.UI.UILabel();
@@ -81,6 +82,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1280, 720);
             this.Font = new System.Drawing.Font("华文行楷", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AdminBuilderForm";
             this.Text = "代码生成器V1.0";
             this.ZoomScaleRect = new System.Drawing.Rectangle(19, 19, 800, 450);

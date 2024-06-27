@@ -16,12 +16,11 @@ namespace AdminBuilder.Model
         [Model("表名", "TableName")]
         public string TableName { get; set; } = string.Empty;
 
-        [Model("曾用名", "OldName",false)]
-        public string OldName { get; set; }
+        [Model("曾用名", "OldName", false)]
+        public string OldName { get; set; } = string.Empty;
 
         [Model("备注", "Desc")]
         public string Desc { get; set; } = string.Empty;
-
 
         public TableBaseInfo(string tableName)
         {

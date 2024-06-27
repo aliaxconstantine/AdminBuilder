@@ -19,7 +19,7 @@ namespace AdminBuilder.Model
         public string ColumnName { get; set; } = string.Empty;
 
         [Model("曾用名", "OldName", false)]
-        public string OldName { get; set; }
+        public string OldName { get; set; } = string.Empty;
 
         // 列数据类型
         [Model("列数据类型", "DataType", true, new string[] { "int", "varchar", "char", "text", "datetime", "float", "double" })]

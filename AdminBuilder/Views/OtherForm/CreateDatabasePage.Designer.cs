@@ -140,14 +140,14 @@
             // 
             this.DbTypeBox.FormattingEnabled = true;
             this.DbTypeBox.Items.AddRange(new object[] {
-            "MySQL",
-            "SQLServer"});
+            "MySql",
+            "SqlServer"});
             this.DbTypeBox.Location = new System.Drawing.Point(134, 154);
             this.DbTypeBox.Name = "DbTypeBox";
             this.DbTypeBox.Size = new System.Drawing.Size(179, 25);
             this.DbTypeBox.TabIndex = 10;
             // 
-            // CreateDatabaseForm
+            // CreateDatabasePage
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(545, 265);
@@ -164,7 +164,7 @@
             this.Font = new System.Drawing.Font("宋体", 10F);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(602, 286);
-            this.Name = "CreateDatabaseForm";
+            this.Name = "CreateDatabasePage";
             this.Text = "创建连接";
             this.TitleFont = new System.Drawing.Font("宋体", 10F);
             this.ZoomScaleDisabled = true;
