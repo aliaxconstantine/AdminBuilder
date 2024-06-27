@@ -15,6 +15,7 @@ using AdminBuilder.Config;
 using Autofac;
 using AdminBuilder.Service.EventModelDTO;
 using AdminBuilder.Service.Connection;
+using System.Web.UI.Design.WebControls;
 
 namespace AdminBuilder.Views
 {
@@ -52,6 +53,10 @@ namespace AdminBuilder.Views
         public void InitPageByColumnData(string dataBaseName, string viewName, int PageNum)
         {
             this.DataView.ClearAll();
+            if(viewName == null)
+            {
+                viewName = viewService.GetAllViews(dataBaseName, 1)[0].TableName;
+            }
             var currentlyColumnData = viewService.GetAllColumInfo(dataBaseName, viewName, PageNum);
             DataView.AddCheckBoxColumn("选择", "string");
             DataView.AddColumn("列名", "string");
@@ -77,7 +82,6 @@ namespace AdminBuilder.Views
             }
             this.CurrentlyColumn = null;
             this.IsView = false;
-
         }
 
 
@@ -104,19 +108,17 @@ namespace AdminBuilder.Views
             {
                 this.CurrentlyView = currentViewData[0]?.TableName;
             }
-            this.CurrentlyView = null;
-            this.CurrentlyColumn = null;
             this.IsView = true;
         }
 
         public bool AddView(TableBaseInfo view)
         {
-            return viewService.AddView(view, CurrentlyView);
+            return viewService.AddView(view, CurrentlyDataBase);
         }
 
         public bool UpdateView(TableBaseInfo view)
         {
-            return viewService.UpDateView(view, CurrentlyView);
+            return viewService.UpDateView(view, CurrentlyDataBase);
         }
 
         public bool AddColumn(ColumnInfo column)
@@ -131,19 +133,18 @@ namespace AdminBuilder.Views
 
         private void ClickButtonByView(object sender, DataGridViewCellEventArgs e)
         {
-            var name = (string)DataView.Rows[DataView.CurrentCell.RowIndex].Cells[1].Value;
             if (DataView.CurrentCell.Value == null)
             {
                 return;
             }
-            //点击按钮时候
+            CurrentlyView = DataView.CurrentRow.Cells[1].Value.ToString();
             ChickViewButton(
                 () => { return viewService.DelView(CurrentlyDataBase, CurrentlyView); },
                 () =>
                   {
                       var form = FormControlFactory.CreateDataForm<TableBaseInfo>();
                       form.UpdateAction += UpdateView;
-                      form.SetData(viewService.GetView(CurrentlyDataBase, name));
+                      form.SetData(viewService.GetView(CurrentlyDataBase, CurrentlyView));
                       form.ShowDialog();
                       return true;
                   },
@@ -155,18 +156,17 @@ namespace AdminBuilder.Views
                         return true;
                     }
                 );
-            //当点击到表时
-            CurrentlyView = DataView.CurrentRow.Cells[0].Value.ToString();
+
         }
 
 
         private void ClickButtonByColumn(object sender, DataGridViewCellEventArgs e)
         {
-            var name = (string)DataView.Rows[DataView.CurrentCell.RowIndex].Cells[1].Value;
             if (DataView.CurrentCell.Value == null)
             {
                 return;
             }
+            CurrentlyColumn = DataView.CurrentRow.Cells[1].Value.ToString();
             //点击按钮时
             ChickViewButton(
                 () => { return viewService.DelColumn(CurrentlyDataBase, CurrentlyView, CurrentlyColumn); },
@@ -174,7 +174,7 @@ namespace AdminBuilder.Views
                     {
                         var form = FormControlFactory.CreateDataForm<ColumnInfo>();
                         form.UpdateAction += UpdateColumn;
-                        form.SetData(viewService.GetColumnInfo(CurrentlyDataBase, CurrentlyView, name));
+                        form.SetData(viewService.GetColumnInfo(CurrentlyDataBase, CurrentlyView, CurrentlyColumn));
                         form.ShowDialog();
                         return true;
                     },
@@ -186,8 +186,6 @@ namespace AdminBuilder.Views
                     return true;
                 }
                 );
-            //当点击到列时
-            CurrentlyColumn = DataView.CurrentRow.Cells[0].Value.ToString();
         }
 
         private void ChickViewButton(Func<bool> delAction, Func<bool> updateAction, Func<bool> addAction)
@@ -258,10 +256,7 @@ namespace AdminBuilder.Views
                 {
                     //改变下拉框数据
                     FreshSeleViews();
-                    if (ViewSelect.SelectedItem.ToString() == "")
-                    {
-                        InitPageByViewData(CurrentlyDataBase, 1);
-                    }
+                    InitPageByViewData(CurrentlyDataBase, 1);
                 }
             }
             else if (data.FreshType == AppConstants.DataBaseKey)
@@ -281,7 +276,6 @@ namespace AdminBuilder.Views
                 strings.Add(e.Name);
             });
             DataBaseSelect.DataSource = strings;
-            DataBaseSelect.SelectedItem = CurrentlyDataBase;
         }
 
         private void FreshSeleViews()
@@ -304,7 +298,6 @@ namespace AdminBuilder.Views
                 views.Add(t.TableName);
             });
             ViewSelect.DataSource = views;
-            ViewSelect.SelectedItem = CurrentlyView;
         }
 
 
@@ -377,15 +370,19 @@ namespace AdminBuilder.Views
         private void DataBaseSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
             ViewSelect.SelectedItem = null;
+            CurrentlyView = null;
+
             if (DataBaseSelect.SelectedItem != null)
             {
-                InitPageByViewData(DataBaseSelect.SelectedItem.ToString(), 1);
+                CurrentlyDataBase = DataBaseSelect.SelectedItem.ToString();
                 FreshSeleViews();
+                InitPageByViewData(DataBaseSelect.SelectedItem.ToString(), 1);
             }
             else
             {
-                InitPageByViewData(DataBaseSelect.Items[0].ToString(), 1);
+                CurrentlyDataBase = DataBaseSelect.Items[0].ToString();
                 FreshSeleViews();
+                InitPageByViewData(DataBaseSelect.Items[0].ToString(), 1);
             }
         }
 
@@ -393,8 +390,9 @@ namespace AdminBuilder.Views
         {
             if (ViewSelect.SelectedItem != null)
             {
+                CurrentlyView = ViewSelect.SelectedItem.ToString();
                 //刷新数据
-                InitPageByColumnData(CurrentlyDataBase, ViewSelect.SelectedItem.ToString(), 1);
+                InitPageByColumnData(CurrentlyDataBase, CurrentlyView, 1);
             }
         }
 

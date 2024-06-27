@@ -150,13 +150,27 @@ namespace AdminBuilder.Utils.FactoryForm
             }
             if (SaveAction != null && !isUpdate)
             {
-                SaveAction(FormKey);
-                UIMessageTip.Show("创建成功");
+                bool result = SaveAction(FormKey);
+                if (result)
+                {
+                    UIMessageTip.Show("创建成功");
+                }
+                else
+                {
+                    UIMessageTip.ShowError("创建失败");
+                }
             }
             if (UpdateAction != null && isUpdate)
             {
-                UpdateAction(FormKey);
-                UIMessageTip.Show("修改成功");
+                bool result = UpdateAction(FormKey);
+                if (result)
+                {
+                    UIMessageTip.Show("修改成功");
+                }
+                else
+                {
+                    UIMessageTip.ShowError("修改失败");
+                }
             }
             Close();
         }

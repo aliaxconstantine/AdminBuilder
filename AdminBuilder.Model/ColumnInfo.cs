@@ -26,7 +26,7 @@ namespace AdminBuilder.Model
         public string DataType { get; set; } = string.Empty;
 
         // 是否允许为 null
-        [Model("是否为null", "IsNullable")]
+        [Model("是否允许为null", "IsNullable")]
         public bool IsNullable { get; set; } = false;
 
         //是否为主键
