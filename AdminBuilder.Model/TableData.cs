@@ -22,5 +22,6 @@ namespace AdminBuilder.Model
 
         [Model("默认值", "DefaultValue")]
         public string DefaultValue { get; set; } = string.Empty;
+        public TableMapper() { }
     }
 }

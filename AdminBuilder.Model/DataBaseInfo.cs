@@ -24,5 +24,6 @@ namespace AdminBuilder.Model
             Version = version;
             TableNames = tableNames;
         }
+        public DataBaseInfo() { }
     }
 }

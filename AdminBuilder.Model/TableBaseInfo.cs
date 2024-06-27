@@ -26,5 +26,6 @@ namespace AdminBuilder.Model
         {
             TableName = tableName;
         }
+        public TableBaseInfo() { }
     }
 }
